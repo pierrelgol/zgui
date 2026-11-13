@@ -23,8 +23,8 @@
             .lazy = true,
         },
         .zgpu = .{
-            .url = "https://github.com/zig-gamedev/zgpu/archive/e6d8103b3c34ce1d6aab4db86dedf9ac889b4e67.tar.gz",
-            .hash = "zgpu-0.12.0-dev-nqFT5DSoCACIu3-Gnwlg3Gv1if5vU5RBhpk8o6r6-vqk",
+            .url = "git+https://github.com/pierrelgol/zgpu#41c32acdd0bccdaeb4801f5dcc2ada78e55c454d",
+            .hash = "zgpu-0.12.0-dev-nqFT5KKoCABpl0K8RcdIj2h7-H2m9wr_KcPHOoV-_bnv",
             .lazy = true,
         },
         .zsdl = .{
