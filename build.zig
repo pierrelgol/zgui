@@ -269,6 +269,8 @@ pub fn build(b: *std.Build) void {
 
     switch (options.backend) {
         .glfw_wgpu => {
+            // The WebGPU backend needs no OpenGL headers, which are absent on many Linux systems.
+            imgui_mod.addCMacro("GLFW_INCLUDE_NONE", "1");
             if (b.lazyDependency("zglfw", .{})) |zglfw| {
                 imgui_mod.addIncludePath(zglfw.path("libs/glfw/include"));
             }
