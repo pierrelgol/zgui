@@ -3759,13 +3759,17 @@ var temp_buffer: ?std.ArrayList(u8) = null;
 
 pub fn format(comptime fmt: []const u8, args: anytype) []const u8 {
     const len = std.fmt.count(fmt, args);
-    if (len > temp_buffer.?.items.len) temp_buffer.?.resize(mem_allocator.?, @intCast(len + 64)) catch unreachable;
-    return std.fmt.bufPrint(temp_buffer.?.items, fmt, args) catch unreachable;
+    // Allocator.print grows its writer geometrically, so leave room for up to twice the final length.
+    if (2 * len + 64 > temp_buffer.?.items.len) temp_buffer.?.resize(mem_allocator.?, @intCast(2 * len + 64)) catch unreachable;
+    var fixed_buffer_allocator: std.heap.FixedBufferAllocator = .init(temp_buffer.?.items);
+    return fixed_buffer_allocator.allocator().print(fmt, args) catch unreachable;
 }
 pub fn formatZ(comptime fmt: []const u8, args: anytype) [:0]const u8 {
     const len = std.fmt.count(fmt ++ "\x00", args);
-    if (len > temp_buffer.?.items.len) temp_buffer.?.resize(mem_allocator.?, @intCast(len + 64)) catch unreachable;
-    return std.mem.printSentinel(temp_buffer.?.items, fmt, args, 0) catch unreachable;
+    // Allocator.print grows its writer geometrically, so leave room for up to twice the final length.
+    if (2 * len + 64 > temp_buffer.?.items.len) temp_buffer.?.resize(mem_allocator.?, @intCast(2 * len + 64)) catch unreachable;
+    var fixed_buffer_allocator: std.heap.FixedBufferAllocator = .init(temp_buffer.?.items);
+    return fixed_buffer_allocator.allocator().printSentinel(fmt, args, 0) catch unreachable;
 }
 //--------------------------------------------------------------------------------------------------
 pub fn typeToDataTypeEnum(comptime T: type) DataType {

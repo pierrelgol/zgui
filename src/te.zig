@@ -236,8 +236,9 @@ pub fn checkTestError(
     src: std.builtin.SourceLocation,
     err: anyerror,
 ) void {
-    var buff: [128:0]u8 = undefined;
-    const msg = std.mem.printSentinel(&buff, "Assert error: {}", .{err}, 0) catch undefined;
+    var buff: [128]u8 = undefined;
+    var fixed_buffer_allocator: std.heap.FixedBufferAllocator = .init(&buff);
+    const msg = fixed_buffer_allocator.allocator().printSentinel("Assert error: {}", .{err}, 0) catch undefined;
     _ = zguiTe_Check(src.file.ptr, src.fn_name.ptr, src.line, .{}, false, msg.ptr);
 }
 
